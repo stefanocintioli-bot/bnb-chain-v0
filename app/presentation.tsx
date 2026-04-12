@@ -129,7 +129,7 @@ const BNBChainPresentation = () => {
           </h2>
         </div>
 
-        <h1 style={{ fontSize: 'clamp(2rem, 4.5vw, 4.5rem)', marginTop: '48px', color: 'var(--gold)', textAlign: 'center', whiteSpace: 'nowrap', fontFamily: 'var(--font-syne)', fontWeight: 800 }}>
+        <h1 style={{ fontSize: 'clamp(2.8rem, 6vw, 5.5rem)', marginTop: '48px', color: 'var(--gold)', textAlign: 'center' }}>
           DESCUBRIENDO BNB CHAIN
         </h1>
 
