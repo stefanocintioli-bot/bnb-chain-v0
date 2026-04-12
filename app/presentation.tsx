@@ -689,7 +689,7 @@ const BNBChainPresentation = () => {
       </div>
 
       {/* Logo */}
-      <div style="position:absolute;top:24px;left:24px;z-index:50;">
+      <div style={{position:'absolute',top:'24px',left:'24px',zIndex:50}}>
         <img 
           src="https://raw.githubusercontent.com/stefanocintioli-bot/bnb-chain-v0/main/logos/BNB_Chain_Logo_White.svg"
           alt="BNB Chain"
