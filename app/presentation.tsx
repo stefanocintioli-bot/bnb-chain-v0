@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import styles from './presentation.module.css';
 
 const BNBChainPresentation = () => {
@@ -42,6 +42,61 @@ const BNBChainPresentation = () => {
   }, []);
 
   const progressPercentage = ((currentSlide + 1) / totalSlides) * 100;
+
+  // --- Count-up animation for slide 3 ---
+  const STATS = [
+    { target: 0.45, decimals: 2, prefix: '~',  suffix: 's'  },
+    { target: 0.03, decimals: 2, prefix: '<$', suffix: ''   },
+    { target: 11.8, decimals: 1, prefix: '$',  suffix: 'B'  },
+    { target: 32,   decimals: 0, prefix: '',   suffix: 'M+' },
+    { target: 4.6,  decimals: 1, prefix: '',   suffix: 'M+' },
+    { target: 100,  decimals: 0, prefix: '',   suffix: '%'  },
+  ];
+
+  const [countValues, setCountValues] = useState(STATS.map(() => 0));
+  const rafRef = useRef<number | null>(null);
+
+  const easeOutQuart = (t: number) => 1 - Math.pow(1 - t, 4);
+
+  const runCountUp = useCallback(() => {
+    if (rafRef.current !== null) cancelAnimationFrame(rafRef.current);
+    setCountValues(STATS.map(() => 0));
+    const duration = 1200;
+    const start = performance.now();
+
+    const tick = (now: number) => {
+      const elapsed = now - start;
+      const progress = Math.min(elapsed / duration, 1);
+      const eased = easeOutQuart(progress);
+
+      setCountValues(STATS.map((s) => s.target * eased));
+
+      if (progress < 1) {
+        rafRef.current = requestAnimationFrame(tick);
+      } else {
+        setCountValues(STATS.map((s) => s.target));
+        rafRef.current = null;
+      }
+    };
+
+    rafRef.current = requestAnimationFrame(tick);
+  }, []);
+
+  useEffect(() => {
+    if (currentSlide === 2) {
+      runCountUp();
+    }
+    return () => {
+      if (rafRef.current !== null) cancelAnimationFrame(rafRef.current);
+    };
+  }, [currentSlide, runCountUp]);
+
+  const formatStat = (index: number) => {
+    const { target, decimals, prefix, suffix } = STATS[index];
+    const raw = countValues[index];
+    const display = raw >= target ? target.toFixed(decimals) : raw.toFixed(decimals);
+    return `${prefix}${display}${suffix}`;
+  };
 
   // Logo SVG component
   const Logo = () => (
@@ -207,12 +262,12 @@ const BNBChainPresentation = () => {
 
         <div className={styles.grid2x3}>
           {[
-            { label: 'BLOCK TIME', value: '~0.45s', sub: 'vs 12s en Ethereum' },
-            { label: 'GAS PROMEDIO', value: '<$0.03', sub: 'por transacción' },
-            { label: 'TVL DeFi', value: '$11.8B', sub: 'en protocolos DeFi' },
-            { label: 'USUARIOS ACTIVOS', value: '32M+', sub: 'mensuales' },
-            { label: 'TX DIARIAS', value: '4.6M+', sub: 'en BSC' },
-            { label: 'EVM COMPATIBLE', value: '100%', sub: 'mismo Solidity' },
+            { label: 'BLOCK TIME',      sub: 'vs 12s en Ethereum' },
+            { label: 'GAS PROMEDIO',    sub: 'por transacción'    },
+            { label: 'TVL DeFi',        sub: 'en protocolos DeFi' },
+            { label: 'USUARIOS ACTIVOS',sub: 'mensuales'          },
+            { label: 'TX DIARIAS',      sub: 'en BSC'             },
+            { label: 'EVM COMPATIBLE',  sub: 'mismo Solidity'     },
           ].map((stat, i) => (
             <div key={i} className={styles.statCard}>
               <p style={{ fontSize: '0.7rem', letterSpacing: '0.1em', color: 'var(--text-muted)', marginBottom: '8px' }}>
@@ -224,9 +279,10 @@ const BNBChainPresentation = () => {
                   fontFamily: 'var(--font-syne)',
                   fontWeight: 800,
                   color: 'var(--gold)',
+                  fontVariantNumeric: 'tabular-nums',
                 }}
               >
-                {stat.value}
+                {formatStat(i)}
               </p>
               <p style={{ fontSize: '0.75rem', marginTop: '4px', color: 'var(--gold)' }}>{stat.sub}</p>
             </div>
