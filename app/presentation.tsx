@@ -63,37 +63,34 @@ const BNBChainPresentation = () => {
     </svg>
   );
 
-  // Geometric shapes for background - deterministic to avoid SSR/client hydration mismatch
+  // Blockchain-style diffused shapes - hexagons and glowing nodes
   const GeometricShapes = ({ intensity = 'normal' }: { intensity?: 'high' | 'normal' | 'low' }) => {
-    // type: 0 = circle, 1 = square, 2 = rounded rect
-    // Circles get rgba(255,255,255,0.18), rects/hexagons get rgba(255,255,255,0.14)
-    // high intensity (slides 1 & 13): opacity 0.25, sizes up to 300px, 8 shapes
-    // normal: 5 shapes, standard sizing
-    // low: 3 shapes, smaller
+    // type: 'hex' = hexagon, 'node' = glowing circle node, 'blob' = soft diffused blob
+    // All shapes are heavily blurred for a diffused atmospheric effect
 
     const normalShapes = [
-      { size: 140, left: 8,  top: 15,  type: 0 },
-      { size: 90,  left: 78, top: 8,   type: 1 },
-      { size: 180, left: 82, top: 62,  type: 2 },
-      { size: 110, left: 3,  top: 72,  type: 0 },
-      { size: 100, left: 48, top: 82,  type: 1 },
+      { size: 200, left: 5,   top: 10,  type: 'hex',  color: 'rgba(240,185,11,0.12)' },
+      { size: 120, left: 80,  top: 5,   type: 'node', color: 'rgba(240,185,11,0.15)' },
+      { size: 280, left: 75,  top: 55,  type: 'hex',  color: 'rgba(255,255,255,0.06)' },
+      { size: 100, left: 2,   top: 70,  type: 'node', color: 'rgba(240,185,11,0.10)' },
+      { size: 160, left: 45,  top: 80,  type: 'blob', color: 'rgba(255,255,255,0.05)' },
     ];
 
     const lowShapes = [
-      { size: 100, left: 88, top: 10,  type: 0 },
-      { size: 130, left: 5,  top: 60,  type: 1 },
-      { size: 80,  left: 55, top: 80,  type: 2 },
+      { size: 180, left: 85,  top: 8,   type: 'hex',  color: 'rgba(240,185,11,0.08)' },
+      { size: 140, left: 5,   top: 55,  type: 'node', color: 'rgba(255,255,255,0.06)' },
+      { size: 120, left: 50,  top: 75,  type: 'blob', color: 'rgba(240,185,11,0.06)' },
     ];
 
     const highShapes = [
-      { size: 280, left: 72, top: -8,  type: 0 },
-      { size: 200, left: -4, top: 55,  type: 1 },
-      { size: 260, left: 80, top: 65,  type: 2 },
-      { size: 150, left: 40, top: 72,  type: 0 },
-      { size: 300, left: 55, top: -12, type: 1 },
-      { size: 180, left: 10, top: 5,   type: 2 },
-      { size: 120, left: 25, top: 85,  type: 0 },
-      { size: 220, left: 62, top: 40,  type: 1 },
+      { size: 350, left: 65,  top: -10, type: 'hex',  color: 'rgba(240,185,11,0.18)' },
+      { size: 250, left: -5,  top: 40,  type: 'hex',  color: 'rgba(240,185,11,0.14)' },
+      { size: 180, left: 80,  top: 60,  type: 'node', color: 'rgba(240,185,11,0.20)' },
+      { size: 140, left: 20,  top: 75,  type: 'node', color: 'rgba(255,255,255,0.12)' },
+      { size: 300, left: 50,  top: 5,   type: 'blob', color: 'rgba(255,255,255,0.08)' },
+      { size: 200, left: 10,  top: 10,  type: 'node', color: 'rgba(240,185,11,0.15)' },
+      { size: 280, left: 70,  top: 80,  type: 'hex',  color: 'rgba(240,185,11,0.12)' },
+      { size: 160, left: 35,  top: 50,  type: 'blob', color: 'rgba(255,255,255,0.06)' },
     ];
 
     const dataset = intensity === 'high' ? highShapes : intensity === 'low' ? lowShapes : normalShapes;
@@ -101,23 +98,23 @@ const BNBChainPresentation = () => {
     return (
       <>
         {dataset.map((data, i) => {
-          const isCircle = data.type === 0;
-          const baseOpacity = intensity === 'high' ? 0.25 : isCircle ? 0.18 : 0.14;
-          const bg = isCircle
-            ? `rgba(255,255,255,${baseOpacity})`
-            : `rgba(255,255,255,${baseOpacity})`;
+          const className = data.type === 'hex' 
+            ? styles.hexagon 
+            : data.type === 'node' 
+              ? styles.node 
+              : styles.geometric;
 
           return (
             <div
               key={i}
-              className={styles.geometric}
+              className={className}
               style={{
                 width: `${data.size}px`,
                 height: `${data.size}px`,
                 left: `${data.left}%`,
                 top: `${data.top}%`,
-                backgroundColor: bg,
-                borderRadius: data.type === 0 ? '50%' : data.type === 1 ? '0' : '16px',
+                backgroundColor: data.color,
+                color: data.type === 'node' ? data.color : undefined,
               }}
             />
           );

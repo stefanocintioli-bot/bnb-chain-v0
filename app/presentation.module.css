@@ -75,8 +75,23 @@
 
 .geometric {
   position: absolute;
-  background-color: rgba(255, 255, 255, 0.18);
   pointer-events: none;
+  filter: blur(40px);
+}
+
+.hexagon {
+  position: absolute;
+  pointer-events: none;
+  filter: blur(25px);
+  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+}
+
+.node {
+  position: absolute;
+  pointer-events: none;
+  border-radius: 50%;
+  filter: blur(20px);
+  box-shadow: 0 0 60px currentColor;
 }
 
 /* Grid layouts */
