@@ -63,27 +63,38 @@ const BNBChainPresentation = () => {
     </svg>
   );
 
-  // Geometric shapes for background
+  // Geometric shapes for background - using deterministic values to avoid hydration mismatch
   const GeometricShapes = ({ intensity = 'normal' }: { intensity?: 'high' | 'normal' | 'low' }) => {
     const shapes = intensity === 'high' ? 8 : intensity === 'low' ? 3 : 5;
+    const opacity = intensity === 'high' ? 0.18 : 0.12;
+    
+    // Pre-computed deterministic values for each shape position
+    const shapeData = [
+      { size: 120, left: 15, top: 25 },
+      { size: 80, left: 75, top: 10 },
+      { size: 150, left: 85, top: 70 },
+      { size: 100, left: 5, top: 80 },
+      { size: 90, left: 45, top: 50 },
+      { size: 130, left: 65, top: 35 },
+      { size: 70, left: 25, top: 65 },
+      { size: 110, left: 55, top: 85 },
+    ];
+
     return (
       <>
         {Array.from({ length: shapes }).map((_, i) => {
-          const size = Math.random() * 140 + 60;
-          const left = Math.random() * 100;
-          const top = Math.random() * 100;
+          const data = shapeData[i % shapeData.length];
           const type = i % 3;
-          const opacity = intensity === 'high' ? 0.18 : 0.12;
 
           return (
             <div
               key={i}
               className={styles.geometric}
               style={{
-                width: `${size}px`,
-                height: `${size}px`,
-                left: `${left}%`,
-                top: `${top}%`,
+                width: `${data.size}px`,
+                height: `${data.size}px`,
+                left: `${data.left}%`,
+                top: `${data.top}%`,
                 opacity,
                 borderRadius: type === 0 ? '50%' : type === 1 ? '0' : '12px',
               }}
@@ -524,13 +535,13 @@ const BNBChainPresentation = () => {
       </div>
     </div>,
 
-    // SLIDE 13 - BUILD AND BUILD
-    <div key="13" className={`${styles.slide} ${styles.ctaSlide}`}>
-      <GeometricShapes intensity="high" />
-      <div className={styles.slideContent} style={{ textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-        <h1 style={{ fontSize: 'clamp(3.5rem, 8vw, 7rem)', fontFamily: 'var(--font-syne)', fontWeight: 800, color: 'var(--gold)' }}>
-          BUILD AND BUILD
-        </h1>
+// SLIDE 13 - BUILD N BUILD
+  <div key="13" className={`${styles.slide} ${styles.ctaSlide}`}>
+  <GeometricShapes intensity="high" />
+  <div className={styles.slideContent} style={{ textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+  <h1 style={{ fontSize: 'clamp(3.5rem, 8vw, 7rem)', fontFamily: 'var(--font-syne)', fontWeight: 800, color: 'var(--gold)' }}>
+  BUILD N BUILD
+  </h1>
         <p style={{ fontSize: '1rem', letterSpacing: '0.25em', marginTop: '8px' }}>
           CONSTRUYE WEB3 CON BNB CHAIN
         </p>
