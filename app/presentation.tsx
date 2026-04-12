@@ -63,28 +63,49 @@ const BNBChainPresentation = () => {
     </svg>
   );
 
-  // Geometric shapes for background - using deterministic values to avoid hydration mismatch
+  // Geometric shapes for background - deterministic to avoid SSR/client hydration mismatch
   const GeometricShapes = ({ intensity = 'normal' }: { intensity?: 'high' | 'normal' | 'low' }) => {
-    const shapes = intensity === 'high' ? 8 : intensity === 'low' ? 3 : 5;
-    const opacity = intensity === 'high' ? 0.18 : 0.12;
-    
-    // Pre-computed deterministic values for each shape position
-    const shapeData = [
-      { size: 120, left: 15, top: 25 },
-      { size: 80, left: 75, top: 10 },
-      { size: 150, left: 85, top: 70 },
-      { size: 100, left: 5, top: 80 },
-      { size: 90, left: 45, top: 50 },
-      { size: 130, left: 65, top: 35 },
-      { size: 70, left: 25, top: 65 },
-      { size: 110, left: 55, top: 85 },
+    // type: 0 = circle, 1 = square, 2 = rounded rect
+    // Circles get rgba(255,255,255,0.18), rects/hexagons get rgba(255,255,255,0.14)
+    // high intensity (slides 1 & 13): opacity 0.25, sizes up to 300px, 8 shapes
+    // normal: 5 shapes, standard sizing
+    // low: 3 shapes, smaller
+
+    const normalShapes = [
+      { size: 140, left: 8,  top: 15,  type: 0 },
+      { size: 90,  left: 78, top: 8,   type: 1 },
+      { size: 180, left: 82, top: 62,  type: 2 },
+      { size: 110, left: 3,  top: 72,  type: 0 },
+      { size: 100, left: 48, top: 82,  type: 1 },
     ];
+
+    const lowShapes = [
+      { size: 100, left: 88, top: 10,  type: 0 },
+      { size: 130, left: 5,  top: 60,  type: 1 },
+      { size: 80,  left: 55, top: 80,  type: 2 },
+    ];
+
+    const highShapes = [
+      { size: 280, left: 72, top: -8,  type: 0 },
+      { size: 200, left: -4, top: 55,  type: 1 },
+      { size: 260, left: 80, top: 65,  type: 2 },
+      { size: 150, left: 40, top: 72,  type: 0 },
+      { size: 300, left: 55, top: -12, type: 1 },
+      { size: 180, left: 10, top: 5,   type: 2 },
+      { size: 120, left: 25, top: 85,  type: 0 },
+      { size: 220, left: 62, top: 40,  type: 1 },
+    ];
+
+    const dataset = intensity === 'high' ? highShapes : intensity === 'low' ? lowShapes : normalShapes;
 
     return (
       <>
-        {Array.from({ length: shapes }).map((_, i) => {
-          const data = shapeData[i % shapeData.length];
-          const type = i % 3;
+        {dataset.map((data, i) => {
+          const isCircle = data.type === 0;
+          const baseOpacity = intensity === 'high' ? 0.25 : isCircle ? 0.18 : 0.14;
+          const bg = isCircle
+            ? `rgba(255,255,255,${baseOpacity})`
+            : `rgba(255,255,255,${baseOpacity})`;
 
           return (
             <div
@@ -95,8 +116,8 @@ const BNBChainPresentation = () => {
                 height: `${data.size}px`,
                 left: `${data.left}%`,
                 top: `${data.top}%`,
-                opacity,
-                borderRadius: type === 0 ? '50%' : type === 1 ? '0' : '12px',
+                backgroundColor: bg,
+                borderRadius: data.type === 0 ? '50%' : data.type === 1 ? '0' : '16px',
               }}
             />
           );
