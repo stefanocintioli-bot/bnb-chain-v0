@@ -250,12 +250,16 @@
   top: 24px;
   left: 24px;
   width: 110px;
+  height: auto;
+  overflow: visible;
   z-index: 10;
 }
 
 .logo svg {
-  width: 100%;
+  width: 110px;
   height: auto;
+  overflow: visible;
+  display: block;
 }
 
 /* Watermark */
