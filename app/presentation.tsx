@@ -360,7 +360,7 @@ const BNBChainPresentation = () => {
           <img
             src="https://raw.githubusercontent.com/stefanocintioli-bot/bnb-chain-v0/main/logos/BNB_Chain_Symbol_Yellow.svg"
             alt="BNB Chain"
-            style={{height:'48px',width:'auto',display:'inline-block'}}
+            style={{height:'96px',width:'auto',display:'inline-block'}}
           />
         </div>
 
