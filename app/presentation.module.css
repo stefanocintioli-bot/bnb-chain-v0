@@ -1,0 +1,404 @@
+.presentationContainer {
+  width: 100vw;
+  height: 100vh;
+  background-color: var(--bg);
+  color: var(--text);
+  font-family: var(--font-dm-mono);
+  overflow: hidden;
+  position: relative;
+}
+
+.slidesWrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.slideContainer {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  transition: opacity 350ms ease, transform 350ms ease;
+}
+
+.slide {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  padding: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.coverSlide {
+  flex-direction: column;
+}
+
+.ctaSlide {
+  flex-direction: column;
+}
+
+.slideContent {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 60px 40px;
+}
+
+.coverSlide .slideContent {
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+}
+
+.ctaSlide .slideContent {
+  justify-content: center;
+}
+
+.coverTop {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.geometric {
+  position: absolute;
+  background-color: rgba(255, 255, 255, 0.12);
+  border-radius: 50%;
+}
+
+/* Grid layouts */
+.grid2x2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  width: 100%;
+}
+
+.grid2x3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  width: 100%;
+}
+
+.grid1x3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  width: 100%;
+}
+
+.grid1x2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  width: 100%;
+  align-items: center;
+}
+
+/* Cards */
+.card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-left: 3px solid var(--gold);
+  border-radius: 12px;
+  padding: 24px;
+  transition: border-color 200ms ease, transform 200ms ease;
+  cursor: pointer;
+}
+
+.card:hover {
+  border-color: var(--gold-border);
+  transform: scale(1.02);
+}
+
+.tallCard {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-left: 3px solid var(--gold);
+  border-radius: 12px;
+  padding: 24px;
+  transition: border-color 200ms ease, transform 200ms ease;
+  cursor: pointer;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.tallCard:hover {
+  border-color: var(--gold-border);
+  transform: scale(1.02);
+}
+
+.statCard {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-left: 3px solid var(--gold);
+  border-radius: 12px;
+  padding: 24px;
+  text-align: center;
+  transition: border-color 200ms ease;
+}
+
+.statCard:hover {
+  border-color: var(--gold-border);
+}
+
+.resourceCard {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 12px;
+  padding: 24px;
+  transition: border-color 200ms ease, transform 200ms ease;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  cursor: pointer;
+  text-decoration: none;
+  color: inherit;
+}
+
+.resourceCard:hover {
+  border-color: var(--gold);
+  transform: scale(1.02);
+}
+
+/* Collage layout */
+.collageContainer {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.photoGrid {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  gap: 32px;
+  grid-template-areas:
+    'tl tr'
+    'bl br';
+  align-items: center;
+  justify-items: center;
+  padding: 60px 80px;
+}
+
+.photoWrapper {
+  position: relative;
+  width: 280px;
+  height: 200px;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.photoWrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.photoTag {
+  position: absolute;
+  bottom: 12px;
+  left: 12px;
+  background-color: var(--gold);
+  color: var(--bg);
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 0.65rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  z-index: 3;
+}
+
+/* Gold pill */
+.goldPill {
+  display: inline-block;
+  background-color: var(--gold);
+  color: var(--bg);
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  margin-bottom: 12px;
+}
+
+/* Logo */
+.logo {
+  position: absolute;
+  top: 24px;
+  left: 24px;
+  width: 110px;
+  z-index: 10;
+}
+
+.logo svg {
+  width: 100%;
+  height: auto;
+}
+
+/* Watermark */
+.watermark {
+  position: absolute;
+  bottom: 24px;
+  right: 180px;
+  font-size: 0.65rem;
+  color: #2a2a2a;
+  letter-spacing: 0.1em;
+  z-index: 5;
+}
+
+/* Slide counter */
+.slideCounter {
+  position: absolute;
+  bottom: 24px;
+  right: 24px;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  z-index: 5;
+  font-family: var(--font-dm-mono);
+}
+
+/* Progress bar */
+.progressBar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 2px;
+  background-color: var(--gold);
+  transition: width 350ms ease;
+  z-index: 5;
+}
+
+/* Social links */
+.socialLinks {
+  display: flex;
+  gap: 16px;
+  margin-top: 24px;
+  justify-content: center;
+}
+
+.socialIcon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.06);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 200ms ease;
+  cursor: pointer;
+  color: var(--gold);
+  flex-shrink: 0;
+}
+
+.socialIcon:hover {
+  background-color: rgba(240, 185, 11, 0.15);
+}
+
+.socialIcon svg {
+  width: 18px;
+  height: 18px;
+  fill: currentColor;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .grid2x2 {
+    grid-template-columns: 1fr;
+  }
+
+  .grid2x3 {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .grid1x3 {
+    grid-template-columns: 1fr;
+  }
+
+  .photoGrid {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto;
+    grid-template-areas:
+      'tl'
+      'tr'
+      'bl'
+      'br';
+    gap: 16px;
+    padding: 40px 20px;
+  }
+
+  .photoWrapper {
+    width: 100%;
+    height: 200px;
+  }
+
+  .slideContent {
+    padding: 40px 20px;
+  }
+
+  .logo {
+    width: 80px;
+  }
+
+  .watermark {
+    right: 150px;
+    font-size: 0.5rem;
+  }
+
+  .slideCounter {
+    right: 16px;
+    font-size: 0.65rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .grid2x2 {
+    grid-template-columns: 1fr;
+  }
+
+  .grid2x3 {
+    grid-template-columns: 1fr;
+  }
+
+  .slideContent {
+    padding: 24px 16px;
+  }
+
+  .logo {
+    width: 70px;
+    top: 16px;
+    left: 16px;
+  }
+
+  .watermark {
+    display: none;
+  }
+
+  .slideCounter {
+    right: 12px;
+    bottom: 18px;
+    font-size: 0.6rem;
+  }
+}
