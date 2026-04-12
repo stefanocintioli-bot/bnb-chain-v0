@@ -613,7 +613,7 @@ const BNBChainPresentation = () => {
   <div key="13" className={`${styles.slide} ${styles.ctaSlide}`}>
   <GeometricShapes intensity="high" />
   <div className={styles.slideContent} style={{ textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-  <h1 style={{ fontSize: 'clamp(3.5rem, 8vw, 7rem)', fontFamily: 'var(--font-syne)', fontWeight: 800, color: 'var(--gold)' }}>
+  <h1 style={{ fontSize: 'clamp(3.5rem, 8vw, 7rem)', fontFamily: 'var(--font-syne)', fontWeight: 800, color: 'var(--gold)', whiteSpace: 'nowrap' }}>
   BUILD N BUILD
   </h1>
         <p style={{ fontSize: '1rem', letterSpacing: '0.25em', marginTop: '8px' }}>
@@ -624,7 +624,7 @@ const BNBChainPresentation = () => {
           src="https://raw.githubusercontent.com/stefanocintioli-bot/bnb-chain-v0/main/events/QR/QR.png"
           alt="Seguinos en @BNBChainLatAM"
           loading="lazy"
-          style={{ width: '200px', height: '200px', borderRadius: '8px', marginTop: '32px' }}
+          style={{ width: '200px', height: '200px', borderRadius: '8px', margin: '32px auto 12px auto', display: 'block' }}
           onError={(e) => {
             const target = e.target as HTMLImageElement;
             target.style.display = 'none';
