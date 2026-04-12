@@ -100,7 +100,7 @@ const BNBChainPresentation = () => {
 
   // Logo SVG component
   const Logo = () => (
-    <svg width="110" height="19" viewBox="0 0 319 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg width="110" height="auto" viewBox="0 0 319 56" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
       <g clipPath="url(#a)">
         <mask id="b" style={{ maskType: 'luminance' }} maskUnits="userSpaceOnUse" x="0" y="0" width="319" height="56">
           <path d="M319 0H0v56h319V0Z" fill="#fff" />
