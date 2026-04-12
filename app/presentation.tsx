@@ -202,6 +202,14 @@ const BNBChainPresentation = () => {
           </h2>
         </div>
 
+        <div style={{textAlign:'center',marginBottom:'32px'}}>
+          <img
+            src="https://raw.githubusercontent.com/stefanocintioli-bot/bnb-chain-v0/main/logos/BNB_Chain_Logo_Yellow.svg"
+            alt="BNB Chain"
+            style={{height:'48px',width:'auto',display:'inline-block'}}
+          />
+        </div>
+
         <h1 style={{ fontSize: 'clamp(2.8rem, 6vw, 5.5rem)', marginTop: '48px', color: 'var(--gold)', textAlign: 'center' }}>
           DESCUBRIENDO BNB CHAIN
         </h1>
@@ -681,8 +689,12 @@ const BNBChainPresentation = () => {
       </div>
 
       {/* Logo */}
-      <div className={styles.logo}>
-        <Logo />
+      <div style="position:absolute;top:24px;left:24px;z-index:50;">
+        <img 
+          src="https://raw.githubusercontent.com/stefanocintioli-bot/bnb-chain-v0/main/logos/BNB_Chain_Logo_White.svg"
+          alt="BNB Chain"
+          style={{height:'20px',width:'auto',display:'block'}}
+        />
       </div>
 
       {/* Watermark */}
