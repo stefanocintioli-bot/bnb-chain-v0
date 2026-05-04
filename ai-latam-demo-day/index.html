@@ -1,0 +1,1346 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI LatAm Demo Day — BNB Chain</title>
+<link rel="icon" type="image/svg+xml" href="public/assets/BNB_Chain_Symbol_Yellow.svg">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --gold: #FFE900;
+    --bg: #0D0D0D;
+    --card: #1a1a1a;
+    --card2: #222222;
+    --border: #2e2e2e;
+    --muted: #888888;
+    --white: #FFFFFF;
+  }
+
+  html, body {
+    width: 100%; height: 100%;
+    background: #000;
+    font-family: 'Space Grotesk', sans-serif;
+    overflow: hidden;
+    user-select: none;
+  }
+
+  #stage {
+    position: fixed;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    background: radial-gradient(ellipse at 85% 85%, rgba(255,233,0,0.04) 0%, transparent 50%), var(--bg);
+    overflow: hidden;
+  }
+
+  /* ── GRID BACKGROUND ── */
+  .bg-grid {
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+    background-size: 48px 48px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ── HEXAGON DECORATION (right side) ── */
+  .hex-deco {
+    position: absolute; right: -40px; top: -60px;
+    width: 55%; height: 120%;
+    pointer-events: none; z-index: 0;
+    opacity: 0.06;
+  }
+
+  /* ── SLIDES CONTAINER ── */
+  #slides { width: 100%; height: 100%; position: relative; }
+
+  .slide {
+    position: absolute; inset: 0;
+    display: none;
+    flex-direction: column;
+    background: var(--bg);
+    padding: 52px 60px 64px;
+    overflow: hidden;
+  }
+  .slide.active { display: flex; }
+
+  /* ── FOOTER ── */
+  .footer {
+    position: absolute; bottom: 20px; left: 0; right: 0;
+    display: flex; align-items: flex-end; justify-content: space-between;
+    padding: 0 28px;
+    z-index: 10;
+  }
+  .footer-logo img { height: 20px; }
+  .footer-tagline {
+    font-size: 11px; font-weight: 600; letter-spacing: 0.12em;
+    color: #444; text-transform: uppercase; text-align: center;
+    flex: 1;
+  }
+  .footer-counter {
+    font-size: 12px; font-weight: 600; color: #444;
+    letter-spacing: 0.08em; min-width: 56px; text-align: right;
+  }
+
+  /* ── TAG PILL ── */
+  .tag-pill {
+    display: inline-flex; align-items: center;
+    background: #252525; border: 1px solid #333;
+    border-radius: 999px; padding: 5px 16px;
+    font-size: 11px; font-weight: 700; letter-spacing: 0.1em;
+    color: var(--white); text-transform: uppercase;
+    margin-bottom: 20px; align-self: flex-start;
+  }
+
+  /* ── GOLD ACCENT LINE ── */
+  .gold-line {
+    width: 64px; height: 3px; background: var(--gold);
+    border-radius: 2px; margin: 16px 0;
+  }
+  .gold-line-full {
+    width: 100%; height: 1px; background: linear-gradient(90deg, var(--gold), transparent);
+    margin: 20px 0;
+  }
+
+  /* ════════════════════════════════
+     SLIDE 1 — COVER
+  ════════════════════════════════ */
+  #slide-1 { padding: 0; justify-content: flex-end; }
+  .s1-content {
+    position: relative; z-index: 2;
+    padding: 44px 60px 80px;
+  }
+  .s1-title {
+    font-size: clamp(52px, 7vw, 82px);
+    font-weight: 700; line-height: 1.05;
+    color: var(--gold); margin-bottom: 12px;
+  }
+  .s1-subtitle {
+    font-size: clamp(18px, 2.2vw, 26px);
+    font-weight: 500; color: var(--white);
+    margin-bottom: 8px;
+  }
+  .s1-date {
+    font-size: 15px; color: var(--muted);
+    margin-bottom: 32px; font-weight: 500;
+  }
+  .s1-logos {
+    display: flex; align-items: center; gap: 20px;
+    margin-bottom: 20px;
+  }
+  .s1-logos img { height: 36px; object-fit: contain; border-radius: 6px; }
+  .s1-logos .logo-sep { color: #333; font-size: 22px; }
+  .s1-host {
+    font-size: 13px; color: var(--muted); font-weight: 500;
+  }
+  .s1-host span { color: var(--gold); }
+  /* Cover logo top-left */
+  .cover-logo {
+    position: absolute; top: 24px; left: 28px; z-index: 10;
+  }
+  .cover-logo img { height: 28px; }
+
+  /* ════════════════════════════════
+     SLIDE 2 — SPEAKERS
+  ════════════════════════════════ */
+  .s2-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 24px; flex: 1; align-items: stretch;
+    margin-top: 8px;
+  }
+  .speaker-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 16px; padding: 32px 24px 28px;
+    display: flex; flex-direction: column; align-items: center;
+    text-align: center; gap: 0;
+  }
+  .speaker-photo {
+    width: 110px; height: 110px; border-radius: 50%;
+    object-fit: cover; border: 3px solid #333;
+    margin-bottom: 18px; flex-shrink: 0;
+  }
+  .speaker-name {
+    font-size: 20px; font-weight: 700; color: var(--white);
+    margin-bottom: 4px;
+  }
+  .speaker-handle {
+    font-size: 15px; font-weight: 600; color: var(--gold);
+    margin-bottom: 6px;
+  }
+  .speaker-role {
+    font-size: 13px; color: var(--muted); margin-bottom: 14px;
+    line-height: 1.4;
+  }
+  .speaker-logo {
+    height: 28px; object-fit: contain; border-radius: 4px;
+    margin-top: auto;
+  }
+
+  /* ════════════════════════════════
+     SLIDE 3 — AGENDA
+  ════════════════════════════════ */
+  .agenda-grid {
+    display: grid; grid-template-rows: repeat(4, 1fr);
+    gap: 14px; flex: 1; margin-top: 4px;
+  }
+  .agenda-item {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 12px; padding: 18px 24px;
+    display: flex; align-items: center; gap: 20px;
+  }
+  .agenda-icon {
+    width: 44px; height: 44px; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    background: #252525; border-radius: 10px;
+    border: 1px solid #333;
+  }
+  .agenda-icon svg { width: 22px; height: 22px; }
+  .agenda-text { flex: 1; }
+  .agenda-title {
+    font-size: 18px; font-weight: 700; color: var(--gold);
+    margin-bottom: 3px;
+  }
+  .agenda-desc { font-size: 14px; color: var(--muted); }
+
+  /* ════════════════════════════════
+     SLIDE 4 & 5 — PROJECT INTRO
+  ════════════════════════════════ */
+  .project-layout {
+    display: grid; grid-template-columns: 55% 45%;
+    gap: 36px; flex: 1; align-items: center;
+    margin-top: 4px;
+  }
+  .project-left { display: flex; flex-direction: column; gap: 16px; }
+  .project-logo-img { height: 64px; object-fit: contain; border-radius: 8px; }
+  .project-title { font-size: clamp(28px, 3.5vw, 40px); font-weight: 700; color: var(--gold); }
+  .project-oneliner { font-size: 18px; color: var(--white); line-height: 1.5; }
+  .project-stat-card {
+    background: transparent; border: 1px solid var(--gold);
+    border-radius: 10px; padding: 14px 18px;
+    font-size: 14px; color: var(--gold); font-weight: 600;
+    line-height: 1.4;
+  }
+  .project-builder {
+    font-size: 14px; color: var(--muted);
+  }
+  .project-right { display: flex; flex-direction: column; gap: 12px; }
+  .link-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 10px; padding: 14px 18px;
+    display: flex; align-items: center; justify-content: space-between;
+    text-decoration: none; transition: border-color 0.2s, background 0.2s;
+  }
+  .link-card:hover { border-color: var(--gold); background: #222; }
+  .link-card-label { font-size: 13px; font-weight: 600; color: var(--white); }
+  .link-card-url { font-size: 11px; color: var(--muted); margin-top: 2px; font-family: monospace; }
+  .link-card-arrow { color: var(--gold); font-size: 16px; flex-shrink: 0; }
+
+  /* ════════════════════════════════
+     SLIDE 6 & 11 — SECTION DIVIDER
+  ════════════════════════════════ */
+  .divider-slide {
+    justify-content: center !important;
+    padding-bottom: 0 !important;
+  }
+  .divider-slide .bg-grid { opacity: 0.4; }
+  .divider-content { position: relative; z-index: 2; }
+  .divider-pill { margin-bottom: 24px; }
+  .divider-line1 {
+    font-size: clamp(38px, 5.5vw, 68px);
+    font-weight: 700; color: var(--gold);
+    line-height: 1.1; margin-bottom: 8px;
+  }
+  .divider-line2 {
+    font-size: clamp(38px, 5.5vw, 68px);
+    font-weight: 700; color: var(--white);
+    line-height: 1.1;
+  }
+  .gold-glow {
+    position: absolute; bottom: 60px; left: 40px;
+    width: 500px; height: 300px;
+    background: radial-gradient(ellipse at 30% 70%, rgba(255,233,0,0.07) 0%, transparent 70%);
+    pointer-events: none; z-index: 1;
+  }
+
+  /* ════════════════════════════════
+     SLIDE 7 & 8 — FLOWCHART
+  ════════════════════════════════ */
+  .flow-row {
+    display: flex; align-items: stretch; gap: 0;
+    margin-bottom: 24px; flex: 0 0 auto;
+  }
+  .flow-step {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 12px; padding: 18px 20px;
+    flex: 1; display: flex; flex-direction: column; gap: 6px;
+  }
+  .flow-step-title { font-size: 15px; font-weight: 700; color: var(--gold); }
+  .flow-step-desc { font-size: 13px; color: var(--muted); line-height: 1.4; }
+  .flow-arrow {
+    display: flex; align-items: center; justify-content: center;
+    padding: 0 10px; color: var(--gold); font-size: 22px;
+    flex-shrink: 0; align-self: center;
+  }
+  .flow-featured {
+    background: transparent; border: 1px solid var(--gold);
+    border-radius: 12px; padding: 16px 22px;
+    font-size: 16px; font-weight: 700; color: var(--gold);
+    text-align: center; margin-bottom: 12px;
+  }
+  .flow-note {
+    font-size: 12px; color: var(--muted); text-align: center;
+  }
+
+  /* ════════════════════════════════
+     SLIDE 9 — POR QUÉ BNB CHAIN
+  ════════════════════════════════ */
+  .stat-grid {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 14px; margin-bottom: 20px;
+  }
+  .stat-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 10px; padding: 20px 16px;
+    display: flex; flex-direction: column; gap: 6px;
+  }
+  .stat-label {
+    font-size: 10px; font-weight: 700; letter-spacing: 0.1em;
+    color: var(--muted); text-transform: uppercase;
+  }
+  .stat-value {
+    font-size: clamp(28px, 3.5vw, 42px); font-weight: 700;
+    color: var(--gold); line-height: 1;
+  }
+  .stat-sub {
+    font-size: 12px; color: var(--white); line-height: 1.3;
+  }
+  .stat-badge {
+    font-size: 10px; color: var(--gold); font-weight: 700;
+    letter-spacing: 0.08em; text-transform: uppercase;
+  }
+
+  /* ════════════════════════════════
+     SLIDE 10 — IA IMPACT
+  ════════════════════════════════ */
+  .impact-slide {
+    justify-content: center !important;
+    align-items: center !important;
+    text-align: center;
+  }
+  .impact-number {
+    font-size: clamp(80px, 14vw, 140px);
+    font-weight: 700; color: var(--gold);
+    line-height: 0.9; position: relative; z-index: 2;
+  }
+  .impact-desc {
+    font-size: clamp(16px, 2.2vw, 22px);
+    color: var(--white); max-width: 520px;
+    line-height: 1.5; margin-top: 16px; position: relative; z-index: 2;
+  }
+  .impact-sub-gold {
+    font-size: 22px; font-weight: 700; color: var(--gold);
+    margin-top: 8px; position: relative; z-index: 2;
+  }
+  .impact-sub-muted {
+    font-size: 13px; color: var(--muted); margin-top: 6px;
+    position: relative; z-index: 2;
+  }
+  .impact-glow {
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 50% 45%, rgba(255,233,0,0.06) 0%, transparent 65%);
+    pointer-events: none; z-index: 1;
+  }
+  /* Particle canvas */
+  #particles-10 { position: absolute; inset: 0; z-index: 1; pointer-events: none; }
+
+  /* ════════════════════════════════
+     SLIDE 12 — PREGUNTA
+  ════════════════════════════════ */
+  .question-slide {
+    justify-content: center !important;
+    align-items: center !important;
+    text-align: center;
+  }
+  .question-line1 {
+    font-size: clamp(22px, 3vw, 34px);
+    color: var(--gold); font-weight: 700; margin-bottom: 16px;
+  }
+  .question-line2 {
+    font-size: clamp(32px, 5vw, 56px);
+    color: var(--white); font-weight: 700; line-height: 1.2;
+    margin-bottom: 24px;
+  }
+  .question-muted {
+    font-size: 14px; color: var(--muted);
+  }
+
+  /* ════════════════════════════════
+     SLIDE 13 — Q&A
+  ════════════════════════════════ */
+  .qa-slide {
+    justify-content: center !important;
+    align-items: center !important;
+    text-align: center;
+  }
+  .qa-title {
+    font-size: clamp(32px, 5vw, 54px);
+    color: var(--white); font-weight: 700; margin-bottom: 16px;
+  }
+  .qa-gold {
+    font-size: clamp(20px, 2.8vw, 30px);
+    color: var(--gold); font-weight: 700; margin-bottom: 12px;
+  }
+  .qa-muted { font-size: 15px; color: var(--muted); }
+
+  /* ════════════════════════════════
+     SLIDE 14 — RECURSOS
+  ════════════════════════════════ */
+  .recursos-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 28px; flex: 1; margin-top: 4px;
+  }
+  .recursos-col { display: flex; flex-direction: column; gap: 12px; }
+  .recursos-col-header {
+    display: flex; align-items: center; gap: 12px;
+    margin-bottom: 4px;
+  }
+  .recursos-col-logo { height: 32px; object-fit: contain; border-radius: 4px; }
+  .recursos-col-title { font-size: 20px; font-weight: 700; color: var(--gold); }
+  .resource-link {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 10px; padding: 13px 16px;
+    display: flex; align-items: center; justify-content: space-between;
+    text-decoration: none; transition: border-color 0.2s, background 0.2s;
+  }
+  .resource-link:hover { border-color: var(--gold); background: #222; }
+  .resource-link-label { font-size: 13px; font-weight: 600; color: var(--white); }
+  .resource-link-url { font-size: 10px; color: var(--muted); margin-top: 2px; font-family: monospace; word-break: break-all; }
+  .resource-link-arr { color: var(--gold); font-size: 14px; flex-shrink: 0; margin-left: 8px; }
+
+  /* ════════════════════════════════
+     SLIDE 15 — CTA / QR
+  ════════════════════════════════ */
+  .cta-layout {
+    display: grid; grid-template-columns: 55% 45%;
+    gap: 40px; flex: 1; align-items: center;
+    margin-top: 4px;
+  }
+  .cta-left { display: flex; flex-direction: column; gap: 16px; }
+  .cta-follow { font-size: 20px; color: var(--white); font-weight: 500; }
+  .cta-handle { font-size: clamp(32px, 5vw, 52px); font-weight: 700; color: var(--gold); }
+  .cta-btns { display: flex; flex-direction: column; gap: 10px; margin-top: 4px; }
+  .cta-btn {
+    background: var(--card); border: 1px solid var(--gold);
+    border-radius: 10px; padding: 13px 18px;
+    display: flex; align-items: center; justify-content: space-between;
+    text-decoration: none; transition: background 0.2s;
+  }
+  .cta-btn:hover { background: #252500; }
+  .cta-btn-label { font-size: 14px; font-weight: 700; color: var(--gold); }
+  .cta-btn-url { font-size: 11px; color: var(--muted); font-family: monospace; }
+  .cta-muted { font-size: 12px; color: var(--muted); }
+  .cta-right {
+    display: flex; flex-direction: column; align-items: center; gap: 12px;
+  }
+  .cta-qr-img {
+    width: min(260px, 38vw); height: auto; border-radius: 12px;
+    border: 1px solid var(--border);
+  }
+  .cta-scan { font-size: 13px; color: var(--muted); }
+
+  /* ════════════════════════════════
+     SLIDE 16 — DISCLAIMER
+  ════════════════════════════════ */
+  .disclaimer-slide {
+    justify-content: center !important;
+    align-items: center !important;
+    text-align: center;
+  }
+  .disclaimer-text {
+    font-size: 15px; color: #666; line-height: 1.8;
+    max-width: 680px;
+  }
+  .disclaimer-divider { width: 40px; height: 1px; background: #333; margin: 20px auto; }
+
+  /* ════════════════════════════════
+     NAVIGATION ARROWS
+  ════════════════════════════════ */
+  .nav-arrow {
+    position: fixed; top: 50%; transform: translateY(-50%);
+    background: rgba(20,20,20,0.85); border: 1px solid #333;
+    border-radius: 50%; width: 40px; height: 40px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; z-index: 100;
+    transition: border-color 0.2s, background 0.2s;
+    color: var(--muted); font-size: 18px;
+  }
+  .nav-arrow:hover { border-color: var(--gold); color: var(--gold); background: rgba(30,30,0,0.9); }
+  #nav-prev { left: 12px; }
+  #nav-next { right: 12px; }
+
+  /* ════════════════════════════════
+     SLIDE TRANSITIONS
+  ════════════════════════════════ */
+  .slide { opacity: 0; transition: opacity 0.35s ease; }
+  .slide.active { opacity: 1; }
+
+  /* ════════════════════════════════
+     SLIDE 2 TITLE AREA
+  ════════════════════════════════ */
+  .slide-title-center {
+    font-size: clamp(22px, 3vw, 32px);
+    font-weight: 700; color: var(--white);
+    text-align: center; margin-bottom: 24px;
+  }
+  .slide-title-center span { color: var(--gold); }
+
+  /* ════════════════════════════════
+     TITLE + SUBTITLE (standard top)
+  ════════════════════════════════ */
+  .slide-heading { margin-bottom: 24px; }
+  .slide-heading-title {
+    font-size: clamp(26px, 3.5vw, 36px);
+    font-weight: 700; color: var(--gold); margin-bottom: 6px;
+  }
+  .slide-heading-sub { font-size: 15px; color: var(--muted); }
+</style>
+</head>
+<body>
+
+<div id="stage">
+  <div id="slides">
+
+    <!-- ══════════════════════════════════
+         SLIDE 1 — COVER / WAITING ROOM
+    ══════════════════════════════════ -->
+    <div class="slide active" id="slide-1">
+      <div class="bg-grid"></div>
+      <svg class="hex-deco" viewBox="0 0 600 900" xmlns="http://www.w3.org/2000/svg" fill="none">
+        <polygon points="420,80 480,120 480,200 420,240 360,200 360,120" stroke="#FFE900" stroke-width="1.2" fill="rgba(255,233,0,0.03)"/>
+        <polygon points="500,200 560,240 560,320 500,360 440,320 440,240" stroke="#FFE900" stroke-width="0.8" fill="rgba(255,233,0,0.02)"/>
+        <polygon points="350,280 410,320 410,400 350,440 290,400 290,320" stroke="#FFE900" stroke-width="0.6" fill="rgba(255,233,0,0.015)"/>
+        <polygon points="460,380 520,420 520,500 460,540 400,500 400,420" stroke="#333" stroke-width="1" fill="rgba(255,255,255,0.01)"/>
+        <polygon points="540,300 580,330 580,390 540,420 500,390 500,330" stroke="#333" stroke-width="0.8" fill="none"/>
+        <polygon points="390,480 450,520 450,600 390,640 330,600 330,520" stroke="#444" stroke-width="0.7" fill="rgba(255,233,0,0.01)"/>
+        <polygon points="490,520 550,560 550,640 490,680 430,640 430,560" stroke="#333" stroke-width="0.8" fill="none"/>
+        <polygon points="560,440 600,470 600,530 560,560 520,530 520,470" stroke="#555" stroke-width="0.6" fill="none"/>
+        <polygon points="320,600 370,635 370,705 320,740 270,705 270,635" stroke="#333" stroke-width="0.8" fill="rgba(255,233,0,0.008)"/>
+        <polygon points="430,660 490,700 490,780 430,820 370,780 370,700" stroke="#FFE900" stroke-width="0.9" fill="rgba(255,233,0,0.025)"/>
+      </svg>
+      <div class="cover-logo">
+        <img src="public/assets/BNB_Chain_Logo_White.svg" alt="BNB Chain">
+      </div>
+      <div class="gold-glow"></div>
+      <div class="s1-content">
+        <div class="s1-title">AI LatAm<br>Demo Day</div>
+        <div class="s1-subtitle">AI Agents en producción sobre BNB Chain</div>
+        <div class="s1-date">Miércoles 6 de Mayo, 2026 &middot; 17:00 hs UTC-3</div>
+        <div class="s1-logos">
+          <img src="public/assets/BNB_Chain_Symbol_White.svg" alt="BNB Chain" style="height:32px;">
+          <span class="logo-sep">&times;</span>
+          <img src="public/assets/apolo.jpg" alt="Apolo Protocol" style="height:36px; border-radius:8px;">
+          <span class="logo-sep">&times;</span>
+          <img src="public/assets/builders.jpg" alt="BuildersClaw" style="height:36px; border-radius:8px;">
+        </div>
+        <div class="s1-host">X Space + YouTube Live &nbsp;&middot;&nbsp; Host: <span>@BNBChainLatAm</span></div>
+      </div>
+      <div class="footer">
+        <div style="min-width:80px;"></div>
+        <div class="footer-tagline">BUILD WEB3 WITH BNB CHAIN</div>
+        <div class="footer-counter" id="counter-1">01 / 16</div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════
+         SLIDE 2 — SPEAKERS
+    ══════════════════════════════════ -->
+    <div class="slide" id="slide-2">
+      <div class="bg-grid"></div>
+      <svg class="hex-deco" viewBox="0 0 600 900" xmlns="http://www.w3.org/2000/svg" fill="none" style="opacity:0.08;">
+        <polygon points="420,80 480,120 480,200 420,240 360,200 360,120" stroke="#FFE900" stroke-width="1" fill="none"/>
+        <polygon points="480,300 540,340 540,420 480,460 420,420 420,340" stroke="#555" stroke-width="0.8" fill="none"/>
+        <polygon points="380,500 440,540 440,620 380,660 320,620 320,540" stroke="#444" stroke-width="0.7" fill="none"/>
+      </svg>
+      <div style="position:relative;z-index:2;display:flex;flex-direction:column;height:100%;">
+        <div class="tag-pill" style="align-self:center;">SPEAKERS</div>
+        <div class="slide-title-center">Los builders <span>en vivo</span></div>
+        <div class="s2-grid" style="flex:1;">
+          <div class="speaker-card">
+            <img src="public/assets/Stefano.jpg" alt="Stefano Cintioli" class="speaker-photo">
+            <div class="speaker-name">Stefano Cintioli</div>
+            <div class="speaker-handle">@s_cintioli_</div>
+            <div class="speaker-role">Host &middot; LatAm Community Lead</div>
+            <img src="public/assets/BNB_Chain_Symbol_White.svg" alt="BNB Chain" class="speaker-logo">
+          </div>
+          <div class="speaker-card">
+            <img src="public/assets/Darien.jpg" alt="Darien Perez" class="speaker-photo">
+            <div class="speaker-name">Darien Perez</div>
+            <div class="speaker-handle">@_d_arien</div>
+            <div class="speaker-role">Software Engineer &middot; Apolo Protocol</div>
+            <img src="public/assets/apolo.jpg" alt="Apolo" class="speaker-logo">
+          </div>
+          <div class="speaker-card">
+            <img src="public/assets/Steven.jpg" alt="Steven Molina" class="speaker-photo">
+            <div class="speaker-name">Steven Molina</div>
+            <div class="speaker-handle">@stevenml_x</div>
+            <div class="speaker-role">Blockchain Dev &middot; BuildersClaw</div>
+            <img src="public/assets/builders.jpg" alt="BuildersClaw" class="speaker-logo">
+          </div>
+        </div>
+      </div>
+      <div class="footer">
+        <div class="footer-logo"><img src="public/assets/BNB_Chain_Logo_White.svg" alt="BNB Chain"></div>
+        <div class="footer-tagline">BUILD WEB3 WITH BNB CHAIN</div>
+        <div class="footer-counter">02 / 16</div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════
+         SLIDE 3 — AGENDA
+    ══════════════════════════════════ -->
+    <div class="slide" id="slide-3">
+      <div class="bg-grid"></div>
+      <svg class="hex-deco" viewBox="0 0 600 900" xmlns="http://www.w3.org/2000/svg" fill="none" style="opacity:0.08;">
+        <polygon points="420,80 480,120 480,200 420,240 360,200 360,120" stroke="#FFE900" stroke-width="1" fill="none"/>
+        <polygon points="480,300 540,340 540,420 480,460 420,420 420,340" stroke="#555" stroke-width="0.8" fill="none"/>
+      </svg>
+      <div style="position:relative;z-index:2;display:flex;flex-direction:column;height:100%;">
+        <div class="tag-pill">AGENDA</div>
+        <div class="agenda-grid" style="flex:1;">
+          <div class="agenda-item">
+            <div class="agenda-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#FFE900" stroke-width="1.8" stroke-linecap="round">
+                <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
+                <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+                <line x1="12" y1="19" x2="12" y2="23"/>
+                <line x1="8" y1="23" x2="16" y2="23"/>
+              </svg>
+            </div>
+            <div class="agenda-text">
+              <div class="agenda-title">Journey</div>
+              <div class="agenda-desc">¿Cómo nació cada proyecto?</div>
+            </div>
+          </div>
+          <div class="agenda-item">
+            <div class="agenda-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#FFE900" stroke-width="1.8" stroke-linecap="round">
+                <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
+                <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+              </svg>
+            </div>
+            <div class="agenda-text">
+              <div class="agenda-title">Por qué BNB Chain</div>
+              <div class="agenda-desc">La red elegida por los builders de IA</div>
+            </div>
+          </div>
+          <div class="agenda-item">
+            <div class="agenda-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#FFE900" stroke-width="1.8" stroke-linecap="round">
+                <circle cx="12" cy="12" r="3"/>
+                <path d="M19.07 4.93a10 10 0 0 1 0 14.14"/>
+                <path d="M4.93 4.93a10 10 0 0 0 0 14.14"/>
+                <path d="M16.24 7.76a6 6 0 0 1 0 8.49"/>
+                <path d="M7.76 7.76a6 6 0 0 0 0 8.49"/>
+              </svg>
+            </div>
+            <div class="agenda-text">
+              <div class="agenda-title">Bajo el capó</div>
+              <div class="agenda-desc">Técnica accesible &mdash; cómo funciona la magia</div>
+            </div>
+          </div>
+          <div class="agenda-item">
+            <div class="agenda-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#FFE900" stroke-width="1.8" stroke-linecap="round">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+              </svg>
+            </div>
+            <div class="agenda-text">
+              <div class="agenda-title">Q&amp;A</div>
+              <div class="agenda-desc">Preguntas de la comunidad</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="footer">
+        <div class="footer-logo"><img src="public/assets/BNB_Chain_Logo_White.svg" alt="BNB Chain"></div>
+        <div class="footer-tagline">BUILD WEB3 WITH BNB CHAIN</div>
+        <div class="footer-counter">03 / 16</div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════
+         SLIDE 4 — APOLO PROTOCOL
+    ══════════════════════════════════ -->
+    <div class="slide" id="slide-4">
+      <div class="bg-grid"></div>
+      <svg class="hex-deco" viewBox="0 0 600 900" xmlns="http://www.w3.org/2000/svg" fill="none" style="opacity:0.08;">
+        <polygon points="420,80 480,120 480,200 420,240 360,200 360,120" stroke="#FFE900" stroke-width="1" fill="none"/>
+      </svg>
+      <div style="position:relative;z-index:2;display:flex;flex-direction:column;height:100%;">
+        <div class="tag-pill">APOLO PROTOCOL</div>
+        <div class="project-layout" style="flex:1;">
+          <div class="project-left">
+            <img src="public/assets/apolo.jpg" alt="Apolo Protocol" class="project-logo-img">
+            <div class="project-title">Apolo Protocol</div>
+            <div class="project-oneliner">Escrow trustless para agentes de IA</div>
+            <div class="project-stat-card">
+              En producción en BNB Mainnet desde abril 2026
+            </div>
+            <div class="project-builder">
+              <svg style="display:inline;width:14px;height:14px;vertical-align:middle;margin-right:6px;" viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+              Darien Perez &middot; Buenos Aires, Argentina
+            </div>
+          </div>
+          <div class="project-right">
+            <a href="https://apolo-protocol.xyz/" target="_blank" class="link-card">
+              <div>
+                <div class="link-card-label">Website</div>
+                <div class="link-card-url">apolo-protocol.xyz</div>
+              </div>
+              <span class="link-card-arrow">&#8599;</span>
+            </a>
+            <a href="https://github.com/DarienPerezGit/Apolo" target="_blank" class="link-card">
+              <div>
+                <div class="link-card-label">GitHub</div>
+                <div class="link-card-url">github.com/DarienPerezGit/Apolo</div>
+              </div>
+              <span class="link-card-arrow">&#8599;</span>
+            </a>
+            <a href="https://bscscan.com/address/0x055ad3F93Cca3B7df30a9C11AD37EBBe8b41cd4d" target="_blank" class="link-card">
+              <div>
+                <div class="link-card-label">Contrato BSCScan</div>
+                <div class="link-card-url">0x055ad3...cd4d</div>
+              </div>
+              <span class="link-card-arrow">&#8599;</span>
+            </a>
+            <a href="https://apolo-solver.onrender.com/evidence/0x5d2dda30437721ad95843c90c231772d4e25252205fb77b5dccb607c851752f8/human" target="_blank" class="link-card">
+              <div>
+                <div class="link-card-label">Evidencia pública</div>
+                <div class="link-card-url">apolo-solver.onrender.com/evidence/...</div>
+              </div>
+              <span class="link-card-arrow">&#8599;</span>
+            </a>
+          </div>
+        </div>
+      </div>
+      <div class="footer">
+        <div class="footer-logo"><img src="public/assets/BNB_Chain_Logo_White.svg" alt="BNB Chain"></div>
+        <div class="footer-tagline">BUILD WEB3 WITH BNB CHAIN</div>
+        <div class="footer-counter">04 / 16</div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════
+         SLIDE 5 — BUILDERSCLAW
+    ══════════════════════════════════ -->
+    <div class="slide" id="slide-5">
+      <div class="bg-grid"></div>
+      <svg class="hex-deco" viewBox="0 0 600 900" xmlns="http://www.w3.org/2000/svg" fill="none" style="opacity:0.08;">
+        <polygon points="420,80 480,120 480,200 420,240 360,200 360,120" stroke="#FFE900" stroke-width="1" fill="none"/>
+      </svg>
+      <div style="position:relative;z-index:2;display:flex;flex-direction:column;height:100%;">
+        <div class="tag-pill">BUILDERSCLAW</div>
+        <div class="project-layout" style="flex:1;">
+          <div class="project-left">
+            <img src="public/assets/builders.jpg" alt="BuildersClaw" class="project-logo-img">
+            <div class="project-title">BuildersClaw</div>
+            <div class="project-oneliner">La arena donde los agentes de IA compiten</div>
+            <div class="project-stat-card">
+              Hackathon con GenLayer &rarr; 8 de mayo en BNB Chain
+            </div>
+            <div class="project-builder">
+              <svg style="display:inline;width:14px;height:14px;vertical-align:middle;margin-right:6px;" viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+              Steven Molina &middot; Fede Tavano &middot; Martin Pulitano &middot; Lucho Rojas
+            </div>
+          </div>
+          <div class="project-right">
+            <a href="https://buildersclaw.xyz/" target="_blank" class="link-card">
+              <div>
+                <div class="link-card-label">Website</div>
+                <div class="link-card-url">buildersclaw.xyz</div>
+              </div>
+              <span class="link-card-arrow">&#8599;</span>
+            </a>
+            <a href="https://github.com/buildersclaw/buildersclaw/" target="_blank" class="link-card">
+              <div>
+                <div class="link-card-label">GitHub</div>
+                <div class="link-card-url">github.com/buildersclaw/buildersclaw</div>
+              </div>
+              <span class="link-card-arrow">&#8599;</span>
+            </a>
+            <a href="https://buildersclaw.notion.site/bnb-resources" target="_blank" class="link-card">
+              <div>
+                <div class="link-card-label">Hackathon Resources</div>
+                <div class="link-card-url">buildersclaw.notion.site/bnb-resources</div>
+              </div>
+              <span class="link-card-arrow">&#8599;</span>
+            </a>
+          </div>
+        </div>
+      </div>
+      <div class="footer">
+        <div class="footer-logo"><img src="public/assets/BNB_Chain_Logo_White.svg" alt="BNB Chain"></div>
+        <div class="footer-tagline">BUILD WEB3 WITH BNB CHAIN</div>
+        <div class="footer-counter">05 / 16</div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════
+         SLIDE 6 — JOURNEY (transition)
+    ══════════════════════════════════ -->
+    <div class="slide divider-slide" id="slide-6">
+      <div class="bg-grid"></div>
+      <svg class="hex-deco" viewBox="0 0 600 900" xmlns="http://www.w3.org/2000/svg" fill="none" style="opacity:0.06;">
+        <polygon points="420,80 480,120 480,200 420,240 360,200 360,120" stroke="#FFE900" stroke-width="1.2" fill="rgba(255,233,0,0.04)"/>
+        <polygon points="500,200 560,240 560,320 500,360 440,320 440,240" stroke="#FFE900" stroke-width="0.8" fill="rgba(255,233,0,0.02)"/>
+        <polygon points="350,280 410,320 410,400 350,440 290,400 290,320" stroke="#FFE900" stroke-width="0.6" fill="rgba(255,233,0,0.015)"/>
+        <polygon points="460,380 520,420 520,500 460,540 400,500 400,420" stroke="#333" stroke-width="1" fill="rgba(255,255,255,0.01)"/>
+        <polygon points="430,660 490,700 490,780 430,820 370,780 370,700" stroke="#FFE900" stroke-width="0.9" fill="rgba(255,233,0,0.025)"/>
+      </svg>
+      <div class="gold-glow"></div>
+      <div class="divider-content" style="position:relative;z-index:2;padding:0 60px;">
+        <div class="tag-pill divider-pill">JOURNEY</div>
+        <div class="divider-line1">&#8220;&#191;Cu&aacute;l fue el momento</div>
+        <div class="divider-line1">en que dijeron...</div>
+        <div class="divider-line2">&#8216;esto tiene que existir&#8217;?&#8221;</div>
+      </div>
+      <div class="cover-logo">
+        <img src="public/assets/BNB_Chain_Logo_White.svg" alt="BNB Chain">
+      </div>
+      <div class="footer">
+        <div style="min-width:56px;"></div>
+        <div class="footer-tagline">BUILD WEB3 WITH BNB CHAIN</div>
+        <div class="footer-counter">06 / 16</div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════
+         SLIDE 7 — APOLO: CÓMO FUNCIONA
+    ══════════════════════════════════ -->
+    <div class="slide" id="slide-7">
+      <div class="bg-grid"></div>
+      <svg class="hex-deco" viewBox="0 0 600 900" xmlns="http://www.w3.org/2000/svg" fill="none" style="opacity:0.08;">
+        <polygon points="420,80 480,120 480,200 420,240 360,200 360,120" stroke="#FFE900" stroke-width="1" fill="none"/>
+      </svg>
+      <div style="position:relative;z-index:2;display:flex;flex-direction:column;height:100%;justify-content:center;">
+        <div style="display:flex;align-items:center;gap:14px;margin-bottom:20px;">
+          <div class="tag-pill" style="margin-bottom:0;">APOLO PROTOCOL</div>
+          <div style="font-size:15px;color:var(--muted);">C&oacute;mo funciona</div>
+        </div>
+        <div class="flow-row" style="margin-bottom:20px;">
+          <div class="flow-step">
+            <div class="flow-step-title">1 &mdash; Agente IA crea Escrow</div>
+            <div class="flow-step-desc">El agente genera el contrato on-chain y define las condiciones de pago autom&aacute;ticamente.</div>
+          </div>
+          <div class="flow-arrow">&rarr;</div>
+          <div class="flow-step">
+            <div class="flow-step-title">2 &mdash; GenLayer valida condiciones</div>
+            <div class="flow-step-desc">La red verificable evalúa si las condiciones del escrow se cumplieron, sin intervención humana.</div>
+          </div>
+          <div class="flow-arrow">&rarr;</div>
+          <div class="flow-step">
+            <div class="flow-step-title">3 &mdash; Contrato libera pago</div>
+            <div class="flow-step-desc">Una vez validado, el contrato libera los fondos autom&aacute;ticamente al destino correcto.</div>
+          </div>
+        </div>
+        <div class="flow-featured">
+          Primer ciclo 100% aut&oacute;nomo en BNB Mainnet &mdash; sin intervenci&oacute;n humana
+        </div>
+        <div class="flow-note">Evidencia pública verificable en BSCScan</div>
+      </div>
+      <div class="footer">
+        <div class="footer-logo"><img src="public/assets/BNB_Chain_Logo_White.svg" alt="BNB Chain"></div>
+        <div class="footer-tagline">BUILD WEB3 WITH BNB CHAIN</div>
+        <div class="footer-counter">07 / 16</div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════
+         SLIDE 8 — BUILDERSCLAW: CÓMO FUNCIONA
+    ══════════════════════════════════ -->
+    <div class="slide" id="slide-8">
+      <div class="bg-grid"></div>
+      <svg class="hex-deco" viewBox="0 0 600 900" xmlns="http://www.w3.org/2000/svg" fill="none" style="opacity:0.08;">
+        <polygon points="420,80 480,120 480,200 420,240 360,200 360,120" stroke="#FFE900" stroke-width="1" fill="none"/>
+      </svg>
+      <div style="position:relative;z-index:2;display:flex;flex-direction:column;height:100%;justify-content:center;">
+        <div style="display:flex;align-items:center;gap:14px;margin-bottom:20px;">
+          <div class="tag-pill" style="margin-bottom:0;">BUILDERSCLAW</div>
+          <div style="font-size:15px;color:var(--muted);">C&oacute;mo funciona</div>
+        </div>
+        <div class="flow-row" style="margin-bottom:20px;">
+          <div class="flow-step">
+            <div class="flow-step-title">1 &mdash; Agentes se registran</div>
+            <div class="flow-step-desc">Los agentes de IA se registran en la plataforma y declaran sus capacidades.</div>
+          </div>
+          <div class="flow-arrow">&rarr;</div>
+          <div class="flow-step">
+            <div class="flow-step-title">2 &mdash; Compiten de forma aut&oacute;noma</div>
+            <div class="flow-step-desc">Se forman equipos, dividen tareas y se comunican entre s&iacute; sin intervenci&oacute;n humana.</div>
+          </div>
+          <div class="flow-arrow">&rarr;</div>
+          <div class="flow-step">
+            <div class="flow-step-title">3 &mdash; GenLayer decide on-chain</div>
+            <div class="flow-step-desc">La red verifica el resultado del hackathon y determina los ganadores on-chain.</div>
+          </div>
+          <div class="flow-arrow">&rarr;</div>
+          <div class="flow-step">
+            <div class="flow-step-title">4 &mdash; Escrow distribuye premios</div>
+            <div class="flow-step-desc">El contrato distribuye los premios en USDC autom&aacute;ticamente a los ganadores.</div>
+          </div>
+        </div>
+        <div class="flow-featured">
+          Los agentes arman equipos, dividen trabajo y se comunican solos
+        </div>
+        <div class="flow-note">Próximo hackathon: 8 de mayo &middot; Premios en USDC en BNB Chain</div>
+      </div>
+      <div class="footer">
+        <div class="footer-logo"><img src="public/assets/BNB_Chain_Logo_White.svg" alt="BNB Chain"></div>
+        <div class="footer-tagline">BUILD WEB3 WITH BNB CHAIN</div>
+        <div class="footer-counter">08 / 16</div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════
+         SLIDE 9 — POR QUÉ BNB CHAIN
+    ══════════════════════════════════ -->
+    <div class="slide" id="slide-9">
+      <div class="bg-grid"></div>
+      <svg class="hex-deco" viewBox="0 0 600 900" xmlns="http://www.w3.org/2000/svg" fill="none" style="opacity:0.08;">
+        <polygon points="420,80 480,120 480,200 420,240 360,200 360,120" stroke="#FFE900" stroke-width="1" fill="none"/>
+        <polygon points="480,300 540,340 540,420 480,460 420,420 420,340" stroke="#555" stroke-width="0.8" fill="none"/>
+      </svg>
+      <div style="position:relative;z-index:2;display:flex;flex-direction:column;height:100%;justify-content:center;">
+        <div class="tag-pill">LA RED</div>
+        <div style="font-size:clamp(26px,3.5vw,36px);font-weight:700;color:var(--gold);margin-bottom:20px;">
+          &#191;Por qu&eacute; BNB Chain?
+        </div>
+        <div class="stat-grid" style="flex:0 0 auto;">
+          <div class="stat-card">
+            <div class="stat-label">Block Time</div>
+            <div class="stat-value" data-countup="0.45" data-prefix="~" data-suffix="s" data-decimals="2">~0.45s</div>
+            <div class="stat-sub">BSC Mainnet</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Gas Fee</div>
+            <div class="stat-value" data-countup="0.01" data-prefix="&lt;$" data-suffix="" data-decimals="2">&lt;$0.01</div>
+            <div class="stat-sub">promedio por tx</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Daily Active Users</div>
+            <div class="stat-value" data-countup="4.3" data-prefix="" data-suffix="M+" data-decimals="1">4.3M+</div>
+            <div class="stat-sub">#1 L1</div>
+            <div class="stat-badge">#1 across all chains</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">TVL DeFi</div>
+            <div class="stat-value" data-countup="10.6" data-prefix="$" data-suffix="B" data-decimals="1">$10.6B</div>
+            <div class="stat-sub">Total Value Locked</div>
+          </div>
+        </div>
+        <div class="gold-line-full"></div>
+        <div style="font-size:18px;font-weight:600;color:var(--white);text-align:center;margin-top:8px;">
+          La infraestructura que eligen los builders de IA en LatAm
+        </div>
+      </div>
+      <div class="footer">
+        <div class="footer-logo"><img src="public/assets/BNB_Chain_Logo_White.svg" alt="BNB Chain"></div>
+        <div class="footer-tagline">BUILD WEB3 WITH BNB CHAIN</div>
+        <div class="footer-counter">09 / 16</div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════
+         SLIDE 10 — IA IMPACT STAT
+    ══════════════════════════════════ -->
+    <div class="slide impact-slide" id="slide-10">
+      <div class="bg-grid"></div>
+      <canvas id="particles-10"></canvas>
+      <div class="impact-glow"></div>
+      <div class="impact-number" data-countup="35" data-prefix="" data-suffix="%" data-decimals="0">35%</div>
+      <div class="impact-desc">de la actividad en BNB Chain la generan agentes de IA</div>
+      <div class="gold-line" style="margin:16px auto;"></div>
+      <div class="impact-sub-gold">BNB Chain: Home of AI Agents</div>
+      <div class="impact-sub-muted">#1 chain in autonomous AI agent transactions</div>
+      <div class="footer">
+        <div class="footer-logo"><img src="public/assets/BNB_Chain_Logo_White.svg" alt="BNB Chain"></div>
+        <div class="footer-tagline">BUILD WEB3 WITH BNB CHAIN</div>
+        <div class="footer-counter">10 / 16</div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════
+         SLIDE 11 — TÉCNICA ACCESIBLE (transition)
+    ══════════════════════════════════ -->
+    <div class="slide divider-slide" id="slide-11">
+      <div class="bg-grid"></div>
+      <svg class="hex-deco" viewBox="0 0 600 900" xmlns="http://www.w3.org/2000/svg" fill="none" style="opacity:0.06;">
+        <polygon points="420,80 480,120 480,200 420,240 360,200 360,120" stroke="#FFE900" stroke-width="1.2" fill="rgba(255,233,0,0.04)"/>
+        <polygon points="500,200 560,240 560,320 500,360 440,320 440,240" stroke="#FFE900" stroke-width="0.8" fill="rgba(255,233,0,0.02)"/>
+        <polygon points="350,280 410,320 410,400 350,440 290,400 290,320" stroke="#FFE900" stroke-width="0.6" fill="rgba(255,233,0,0.015)"/>
+        <polygon points="430,660 490,700 490,780 430,820 370,780 370,700" stroke="#FFE900" stroke-width="0.9" fill="rgba(255,233,0,0.025)"/>
+      </svg>
+      <div class="gold-glow"></div>
+      <div class="divider-content" style="position:relative;z-index:2;padding:0 60px;">
+        <div class="tag-pill divider-pill">T&Eacute;CNICA ACCESIBLE</div>
+        <div class="divider-line1">Bajo el cap&oacute;</div>
+        <div class="divider-line2">C&oacute;mo funciona la magia,</div>
+        <div class="divider-line2">explicado simple</div>
+      </div>
+      <div class="cover-logo">
+        <img src="public/assets/BNB_Chain_Logo_White.svg" alt="BNB Chain">
+      </div>
+      <div class="footer">
+        <div style="min-width:56px;"></div>
+        <div class="footer-tagline">BUILD WEB3 WITH BNB CHAIN</div>
+        <div class="footer-counter">11 / 16</div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════
+         SLIDE 12 — PARA BUILDERS (pregunta)
+    ══════════════════════════════════ -->
+    <div class="slide question-slide" id="slide-12">
+      <div class="bg-grid"></div>
+      <svg class="hex-deco" viewBox="0 0 600 900" xmlns="http://www.w3.org/2000/svg" fill="none" style="opacity:0.08;">
+        <polygon points="420,80 480,120 480,200 420,240 360,200 360,120" stroke="#FFE900" stroke-width="1" fill="none"/>
+        <polygon points="480,300 540,340 540,420 480,460 420,420 420,340" stroke="#555" stroke-width="0.8" fill="none"/>
+      </svg>
+      <div style="position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;text-align:center;padding:40px;">
+        <div class="question-line1">Si est&aacute;s arrancando en IA on-chain...</div>
+        <div class="question-line2">&#191;Cu&aacute;l es el error<br>m&aacute;s com&uacute;n?</div>
+        <div class="question-muted">Responden los builders en vivo</div>
+      </div>
+      <div class="footer">
+        <div class="footer-logo"><img src="public/assets/BNB_Chain_Logo_White.svg" alt="BNB Chain"></div>
+        <div class="footer-tagline">BUILD WEB3 WITH BNB CHAIN</div>
+        <div class="footer-counter">12 / 16</div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════
+         SLIDE 13 — Q&A
+    ══════════════════════════════════ -->
+    <div class="slide qa-slide" id="slide-13">
+      <div class="bg-grid"></div>
+      <svg class="hex-deco" viewBox="0 0 600 900" xmlns="http://www.w3.org/2000/svg" fill="none" style="opacity:0.08;">
+        <polygon points="420,80 480,120 480,200 420,240 360,200 360,120" stroke="#FFE900" stroke-width="1" fill="none"/>
+      </svg>
+      <div style="position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;text-align:center;padding:40px;">
+        <div class="tag-pill" style="align-self:center;margin-bottom:24px;">Q&amp;A</div>
+        <div class="qa-title">Preguntas de la comunidad</div>
+        <div class="qa-gold">Dej&aacute; tu pregunta en el chat</div>
+        <div class="qa-muted">YouTube Live + X Space</div>
+      </div>
+      <div class="footer">
+        <div class="footer-logo"><img src="public/assets/BNB_Chain_Logo_White.svg" alt="BNB Chain"></div>
+        <div class="footer-tagline">BUILD WEB3 WITH BNB CHAIN</div>
+        <div class="footer-counter">13 / 16</div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════
+         SLIDE 14 — RECURSOS
+    ══════════════════════════════════ -->
+    <div class="slide" id="slide-14">
+      <div class="bg-grid"></div>
+      <svg class="hex-deco" viewBox="0 0 600 900" xmlns="http://www.w3.org/2000/svg" fill="none" style="opacity:0.08;">
+        <polygon points="420,80 480,120 480,200 420,240 360,200 360,120" stroke="#FFE900" stroke-width="1" fill="none"/>
+      </svg>
+      <div style="position:relative;z-index:2;display:flex;flex-direction:column;height:100%;">
+        <div class="tag-pill">RECURSOS</div>
+        <div style="font-size:clamp(22px,3vw,30px);font-weight:700;color:var(--white);margin-bottom:16px;">
+          Explor&aacute; los proyectos
+        </div>
+        <div class="recursos-grid" style="flex:1;">
+          <div class="recursos-col">
+            <div class="recursos-col-header">
+              <img src="public/assets/apolo.jpg" alt="Apolo" class="recursos-col-logo">
+              <span class="recursos-col-title">Apolo Protocol</span>
+            </div>
+            <a href="https://apolo-protocol.xyz/" target="_blank" class="resource-link">
+              <div>
+                <div class="resource-link-label">Website</div>
+                <div class="resource-link-url">apolo-protocol.xyz</div>
+              </div>
+              <span class="resource-link-arr">&#8599;</span>
+            </a>
+            <a href="https://github.com/DarienPerezGit/Apolo" target="_blank" class="resource-link">
+              <div>
+                <div class="resource-link-label">GitHub</div>
+                <div class="resource-link-url">github.com/DarienPerezGit/Apolo</div>
+              </div>
+              <span class="resource-link-arr">&#8599;</span>
+            </a>
+            <a href="https://bscscan.com/address/0x055ad3F93Cca3B7df30a9C11AD37EBBe8b41cd4d" target="_blank" class="resource-link">
+              <div>
+                <div class="resource-link-label">Contrato BSCScan</div>
+                <div class="resource-link-url">0x055ad3F93Cca3B7df30a9C11AD37EBBe8b41cd4d</div>
+              </div>
+              <span class="resource-link-arr">&#8599;</span>
+            </a>
+            <a href="https://apolo-solver.onrender.com/evidence/0x5d2dda30437721ad95843c90c231772d4e25252205fb77b5dccb607c851752f8/human" target="_blank" class="resource-link">
+              <div>
+                <div class="resource-link-label">Evidencia p&uacute;blica</div>
+                <div class="resource-link-url">apolo-solver.onrender.com/evidence/...</div>
+              </div>
+              <span class="resource-link-arr">&#8599;</span>
+            </a>
+          </div>
+          <div class="recursos-col">
+            <div class="recursos-col-header">
+              <img src="public/assets/builders.jpg" alt="BuildersClaw" class="recursos-col-logo">
+              <span class="recursos-col-title">BuildersClaw</span>
+            </div>
+            <a href="https://buildersclaw.xyz/" target="_blank" class="resource-link">
+              <div>
+                <div class="resource-link-label">Website</div>
+                <div class="resource-link-url">buildersclaw.xyz</div>
+              </div>
+              <span class="resource-link-arr">&#8599;</span>
+            </a>
+            <a href="https://github.com/buildersclaw/buildersclaw/" target="_blank" class="resource-link">
+              <div>
+                <div class="resource-link-label">GitHub</div>
+                <div class="resource-link-url">github.com/buildersclaw/buildersclaw</div>
+              </div>
+              <span class="resource-link-arr">&#8599;</span>
+            </a>
+            <a href="https://buildersclaw.notion.site/bnb-resources" target="_blank" class="resource-link">
+              <div>
+                <div class="resource-link-label">Hackathon Resources</div>
+                <div class="resource-link-url">buildersclaw.notion.site/bnb-resources</div>
+              </div>
+              <span class="resource-link-arr">&#8599;</span>
+            </a>
+          </div>
+        </div>
+      </div>
+      <div class="footer">
+        <div class="footer-logo"><img src="public/assets/BNB_Chain_Logo_White.svg" alt="BNB Chain"></div>
+        <div class="footer-tagline">BUILD WEB3 WITH BNB CHAIN</div>
+        <div class="footer-counter">14 / 16</div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════
+         SLIDE 15 — CTA / QR
+    ══════════════════════════════════ -->
+    <div class="slide" id="slide-15">
+      <div class="bg-grid"></div>
+      <svg class="hex-deco" viewBox="0 0 600 900" xmlns="http://www.w3.org/2000/svg" fill="none" style="opacity:0.08;">
+        <polygon points="420,80 480,120 480,200 420,240 360,200 360,120" stroke="#FFE900" stroke-width="1" fill="none"/>
+        <polygon points="480,300 540,340 540,420 480,460 420,420 420,340" stroke="#555" stroke-width="0.8" fill="none"/>
+      </svg>
+      <div style="position:relative;z-index:2;display:flex;flex-direction:column;height:100%;">
+        <div class="tag-pill">COMUNIDAD</div>
+        <div class="cta-layout" style="flex:1;">
+          <div class="cta-left">
+            <div class="cta-follow">Segu&iacute;nos en X</div>
+            <div class="cta-handle">@BNBChainLatAM</div>
+            <div class="gold-line"></div>
+            <div class="cta-btns">
+              <a href="https://t.me/BNBChainES" target="_blank" class="cta-btn">
+                <div>
+                  <div class="cta-btn-label">Telegram ES</div>
+                  <div class="cta-btn-url">t.me/BNBChainES</div>
+                </div>
+                <span style="color:var(--gold);">&#8599;</span>
+              </a>
+              <a href="https://x.com/BNBChainLatAM" target="_blank" class="cta-btn">
+                <div>
+                  <div class="cta-btn-label">X @BNBChainLatAM</div>
+                  <div class="cta-btn-url">x.com/BNBChainLatAM</div>
+                </div>
+                <span style="color:var(--gold);">&#8599;</span>
+              </a>
+              <a href="https://docs.bnbchain.org" target="_blank" class="cta-btn">
+                <div>
+                  <div class="cta-btn-label">BNB Chain Docs</div>
+                  <div class="cta-btn-url">docs.bnbchain.org</div>
+                </div>
+                <span style="color:var(--gold);">&#8599;</span>
+              </a>
+            </div>
+            <div class="cta-muted">M&aacute;s spaces, hackathons y oportunidades para builders</div>
+          </div>
+          <div class="cta-right">
+            <img src="public/assets/QR.png" alt="QR Code" class="cta-qr-img">
+            <div class="cta-scan">Escan&eacute;a el QR</div>
+          </div>
+        </div>
+      </div>
+      <div class="footer">
+        <div class="footer-logo"><img src="public/assets/BNB_Chain_Logo_White.svg" alt="BNB Chain"></div>
+        <div class="footer-tagline">BUILD WEB3 WITH BNB CHAIN</div>
+        <div class="footer-counter">15 / 16</div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════
+         SLIDE 16 — DISCLAIMER
+    ══════════════════════════════════ -->
+    <div class="slide disclaimer-slide" id="slide-16">
+      <div class="bg-grid"></div>
+      <div style="position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;text-align:center;padding:60px;">
+        <div class="disclaimer-text">
+          Este Space tiene car&aacute;cter estrictamente educacional.
+          <div class="disclaimer-divider"></div>
+          El objetivo es compartir experiencias de builders y buenas pr&aacute;cticas de desarrollo con IA en el ecosistema BNB Chain.
+          <div class="disclaimer-divider"></div>
+          Nada de lo expresado constituye asesoramiento financiero.
+        </div>
+      </div>
+      <div class="footer">
+        <div class="footer-logo"><img src="public/assets/BNB_Chain_Logo_White.svg" alt="BNB Chain"></div>
+        <div class="footer-tagline">BUILD WEB3 WITH BNB CHAIN</div>
+        <div class="footer-counter">16 / 16</div>
+      </div>
+    </div>
+
+  </div><!-- /slides -->
+
+  <!-- Navigation arrows -->
+  <button class="nav-arrow" id="nav-prev" aria-label="Previous">&#8592;</button>
+  <button class="nav-arrow" id="nav-next" aria-label="Next">&#8594;</button>
+
+</div><!-- /stage -->
+
+<script>
+// ════════════════════════════════════════
+// STAGE SIZING — keep 16:9 in viewport
+// ════════════════════════════════════════
+const stage = document.getElementById('stage');
+function resize() {
+  const vw = window.innerWidth, vh = window.innerHeight;
+  const ratio = 16 / 9;
+  let w, h;
+  if (vw / vh > ratio) { h = vh; w = h * ratio; }
+  else { w = vw; h = w / ratio; }
+  stage.style.width  = w + 'px';
+  stage.style.height = h + 'px';
+  // Scale font-size reference
+  stage.style.fontSize = (w / 1280) + 'px';
+}
+resize();
+window.addEventListener('resize', resize);
+
+// ════════════════════════════════════════
+// SLIDE NAVIGATION
+// ════════════════════════════════════════
+const slides = document.querySelectorAll('.slide');
+const TOTAL  = slides.length;
+let current  = 0;
+let countedSlides = new Set();
+
+function goTo(n) {
+  slides[current].classList.remove('active');
+  current = (n + TOTAL) % TOTAL;
+  slides[current].classList.add('active');
+  triggerCountUp(current);
+  if (current === 9) startParticles(); // slide 10 (index 9)
+}
+
+document.getElementById('nav-prev').addEventListener('click', () => goTo(current - 1));
+document.getElementById('nav-next').addEventListener('click', () => goTo(current + 1));
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown') goTo(current + 1);
+  if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   goTo(current - 1);
+});
+
+// Touch swipe
+let touchX = 0;
+stage.addEventListener('touchstart', e => { touchX = e.touches[0].clientX; }, {passive:true});
+stage.addEventListener('touchend',   e => {
+  const dx = touchX - e.changedTouches[0].clientX;
+  if (Math.abs(dx) > 40) { if (dx > 0) goTo(current + 1); else goTo(current - 1); }
+}, {passive:true});
+
+// Init first slide countup
+triggerCountUp(0);
+
+// ════════════════════════════════════════
+// COUNTUP ANIMATION
+// ════════════════════════════════════════
+function triggerCountUp(slideIndex) {
+  if (countedSlides.has(slideIndex)) return;
+  countedSlides.add(slideIndex);
+  const slide = slides[slideIndex];
+  slide.querySelectorAll('[data-countup]').forEach(el => {
+    const target   = parseFloat(el.dataset.countup);
+    const prefix   = el.dataset.prefix   || '';
+    const suffix   = el.dataset.suffix   || '';
+    const decimals = parseInt(el.dataset.decimals) || 0;
+    const duration = 1500;
+    const start    = performance.now();
+    function tick(now) {
+      const elapsed = now - start;
+      const progress = Math.min(elapsed / duration, 1);
+      // easeOut quad
+      const ease = 1 - Math.pow(1 - progress, 3);
+      const val = target * ease;
+      el.textContent = prefix + val.toFixed(decimals) + suffix;
+      if (progress < 1) requestAnimationFrame(tick);
+      else el.textContent = prefix + target.toFixed(decimals) + suffix;
+    }
+    requestAnimationFrame(tick);
+  });
+}
+
+// ════════════════════════════════════════
+// PARTICLE EFFECT (slide 10)
+// ════════════════════════════════════════
+let particlesRunning = false;
+function startParticles() {
+  if (particlesRunning) return;
+  particlesRunning = true;
+  const canvas = document.getElementById('particles-10');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  function sizeCanvas() {
+    canvas.width  = stage.offsetWidth;
+    canvas.height = stage.offsetHeight;
+  }
+  sizeCanvas();
+  window.addEventListener('resize', sizeCanvas);
+
+  const particles = Array.from({length: 60}, () => ({
+    x: Math.random() * canvas.width,
+    y: Math.random() * canvas.height + canvas.height * 0.5,
+    r: Math.random() * 2.5 + 0.5,
+    vy: -(Math.random() * 0.6 + 0.2),
+    vx: (Math.random() - 0.5) * 0.3,
+    life: Math.random(),
+    maxLife: Math.random() * 0.6 + 0.4,
+  }));
+
+  function animate() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    particles.forEach(p => {
+      p.y  += p.vy;
+      p.x  += p.vx;
+      p.life -= 0.003;
+      if (p.life <= 0) {
+        p.x    = Math.random() * canvas.width;
+        p.y    = canvas.height + 10;
+        p.life = p.maxLife;
+        p.vy   = -(Math.random() * 0.6 + 0.2);
+        p.vx   = (Math.random() - 0.5) * 0.3;
+      }
+      const alpha = Math.min(p.life / p.maxLife, 0.7);
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(255,233,0,${alpha})`;
+      ctx.fill();
+    });
+    requestAnimationFrame(animate);
+  }
+  animate();
+}
+</script>
+</body>
+</html>
